@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Closure;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Database\Seeders\TahunAjaranSeeder;
+use Database\Seeders\KategoriSuratSeeder;
+use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 class DatabaseSeeder extends Seeder
@@ -24,6 +26,11 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('12345678'),
         ]));
         $this->command->info('Superadmin user has been created successfully.');
+
+        $this->call([
+            KategoriSuratSeeder::class,
+            TahunAjaranSeeder::class,
+        ]);
     }
 
     protected function withProgressBar(int $amount, Closure $createCollectionOfOne): Collection
