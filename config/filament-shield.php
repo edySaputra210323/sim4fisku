@@ -7,11 +7,14 @@ return [
         'navigation_sort' => -1,
         'navigation_badge' => true,
         'navigation_group' => true,
+        'sub_navigation_position' => null,
         'is_globally_searchable' => false,
-        'show_model_path' => false,
+        'show_model_path' => true,
         'is_scoped_to_tenant' => true,
         'cluster' => null,
     ],
+
+    'tenant_model' => null,
 
     'auth_provider_model' => [
         'fqcn' => 'App\\Models\\User',
@@ -19,14 +22,14 @@ return [
 
     'super_admin' => [
         'enabled' => true,
-        'name' => 'superadmin',
+        'name' => 'super_admin',
         'define_via_gate' => false,
         'intercept_gate' => 'before', // after
     ],
 
     'panel_user' => [
         'enabled' => true,
-        'name' => 'user',
+        'name' => 'panel_user',
     ],
 
     'permission_prefixes' => [
@@ -35,10 +38,10 @@ return [
             'view_any',
             'create',
             'update',
-            // 'restore',
-            // 'restore_any',
-            // 'replicate',
-            // 'reorder',
+            'restore',
+            'restore_any',
+            'replicate',
+            'reorder',
             'delete',
             'delete_any',
             'force_delete',
