@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SuratKeluar extends Model
 {
@@ -19,6 +20,7 @@ class SuratKeluar extends Model
         'deskripsi', 
         'dokumen',
         'dibuat_oleh_id', 
+        'smester_id',
         'th_ajaran_id',
         'nomor_urut',
     ];
@@ -36,5 +38,10 @@ class SuratKeluar extends Model
     public function tahunAjaran()
     {
         return $this->belongsTo(TahunAjaran::class, 'th_ajaran_id');
+    }
+
+    public function smester()
+    {
+        return $this->belongsTo(Semester::class, 'smester_id');
     }
 }

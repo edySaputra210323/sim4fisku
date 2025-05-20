@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('dokumen')->nullable();
             $table->foreignId('dibuat_oleh_id')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('th_ajaran_id')->nullable()->constrained('tahun_ajaran')->nullOnDelete();
+            $table->foreignId('smester_id')->nullable()->constrained('smester')->nullOnDelete();
             $table->timestamps();
         });
     }

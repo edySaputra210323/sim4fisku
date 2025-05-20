@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\SuratKeluar;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TahunAjaran extends Model
 {
@@ -10,8 +12,6 @@ class TahunAjaran extends Model
 
     protected $fillable = [
         'th_ajaran',
-        'periode_mulai',
-        'periode_akhir',
         'status',
     ];
 
@@ -37,5 +37,15 @@ class TahunAjaran extends Model
                     ->update(['status' => false]);
             }
         });
+    }
+
+    public function semesters()
+    {
+        return $this->hasMany(Semester::class, 'th_ajaran_id');
+    }
+
+    public function suratKeluar()
+    {
+        return $this->hasMany(SuratKeluar::class, 'th_ajaran_id');
     }
 }

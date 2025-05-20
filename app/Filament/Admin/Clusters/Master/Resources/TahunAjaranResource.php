@@ -49,16 +49,6 @@ class TahunAjaranResource extends Resource
                     'required' => 'Tahun ajaran tidak boleh kosong',
                     'unique' => 'Tahun ajaran sudah ada, gunakan tahun ajaran lain',
                     ]),
-                Forms\Components\DatePicker::make('periode_mulai')
-                            ->label('PERIODE MULAI')
-                            ->placeholder('D/M/Y')
-                            ->native(false)
-                            ->displayFormat('d/m/Y'),
-                Forms\Components\DatePicker::make('periode_akhir')
-                            ->label('PERIODE AKHIR')
-                            ->placeholder('D/M/Y')
-                            ->native(false)
-                            ->displayFormat('d/m/Y'),
                 Forms\Components\Toggle::make('status')
                     ->required()
                     ->default(false),
@@ -100,14 +90,6 @@ class TahunAjaranResource extends Resource
                 Tables\Columns\TextColumn::make('th_ajaran')
                     ->label('Tahun Ajaran')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('periode_mulai')
-                    ->date()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('periode_akhir')
-                    ->date()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\ToggleColumn::make('status')
                     ->label('Status Aktif')
                     ->alignCenter()
@@ -117,15 +99,7 @@ class TahunAjaranResource extends Resource
                             \App\Models\TahunAjaran::where('id', '!=', $record->id)
                                 ->update(['status' => false]);
                         }
-                    }),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    })
             ])
             ->filters([
                 //

@@ -54,7 +54,6 @@ class CreateSuratKeluar extends CreateRecord
                 'kategori_surat_id' => $data['kategori_surat_id'] ?? null,
             ]);
         }
-
         return $data;
     }
 

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Admin\Clusters\Master\Resources\TahunAjaranResource\Pages;
+namespace App\Filament\Admin\Clusters\Master\Resources\SmesterResource\Pages;
 
-use App\Filament\Admin\Clusters\Master\Resources\TahunAjaranResource;
+use App\Filament\Admin\Clusters\Master\Resources\SmesterResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditTahunAjaran extends EditRecord
+class EditSmester extends EditRecord
 {
-    protected static string $resource = TahunAjaranResource::class;
+    protected static string $resource = SmesterResource::class;
 
     protected function getRedirectUrl(): string
     {

@@ -93,22 +93,22 @@
         <thead>
             <tr>
                 <th width="5%">No</th>
-                <th width="23%">Nomor Surat</th>
-                <th width="10%">Tanggal</th>
-                <th width="22%">Perihal</th>
-                <th width="20%">Tujuan</th>
+                <th width="20%">Nomor Surat</th>
                 <th width="20%">Kategori</th>
+                <th width="10%">Tanggal</th>
+                <th width="20%">Tujuan</th>
+                <th width="25%">Perihal</th>                
             </tr>
         </thead>
         <tbody>
             @forelse ($suratKeluars as $index => $surat)
                 <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
-                    <td>{{ $surat->no_surat }}</td>
-                    <td>{{ \Carbon\Carbon::parse($surat->tgl_surat_keluar)->format('d/m/Y') }}</td>
-                    <td>{{ $surat->perihal }}</td>
-                    <td>{{ $surat->tujuan_pengiriman }}</td>
-                    <td>{{ $surat->kategoriSurat->kategori ?? '-' }}</td>
+                    <td style="text-align: center;">{{ $surat->no_surat }}</td>
+                    <td style="text-align: center;">{{ $surat->kategoriSurat->kategori ?? '-' }}</td>
+                    <td style="text-align: center;">{{ \Carbon\Carbon::parse($surat->tgl_surat_keluar)->format('d/m/Y') }}</td>
+                    <td style="text-align: left;">{{ $surat->tujuan_pengiriman }}</td>
+                    <td style="text-align: left;">{{ $surat->perihal }}</td>
                 </tr>
             @empty
                 <tr>
