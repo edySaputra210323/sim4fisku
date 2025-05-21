@@ -210,12 +210,22 @@ class SuratKeluarResource extends Resource
     public static function table(Table $table): Table
     {
         $activeTahunAjaran = cache()->remember('active_th_ajaran', now()->addMinutes(1), fn () => \App\Models\TahunAjaran::where('status', true)->first());
+        $activeSmester = cache()->remember('active_smester', now()->addMinutes(1), fn () => \App\Models\Smester::where('status', true)->first());
         
         // Tampilkan notifikasi jika tidak ada tahun ajaran aktif
         if (!$activeTahunAjaran) {
             Notification::make()
                 ->title('Peringatan')
                 ->body('Tidak ada tahun ajaran yang aktif. Silakan aktifkan tahun ajaran terlebih dahulu.')
+                ->warning()
+                ->persistent()
+                ->send();
+        }
+
+        if (!$activeSmester) {
+            Notification::make()
+                ->title('Peringatan')
+                ->body('Tidak ada semester yang aktif. Silakan aktifkan semester terlebih dahulu.')
                 ->warning()
                 ->persistent()
                 ->send();
@@ -264,6 +274,12 @@ class SuratKeluarResource extends Resource
                     ->searchable()
                     ->preload()
                     ->default($activeTahunAjaran ? $activeTahunAjaran->id : null),
+                SelectFilter::make('smester_id')
+                    ->label('Semester')
+                    ->relationship('smester', 'nm_smester')
+                    ->searchable()
+                    ->preload()
+                    ->default($activeSmester ? $activeSmester->id : null),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -352,23 +368,23 @@ class SuratKeluarResource extends Resource
                 Tables\Actions\Action::make('export_pdf')
                     ->label('Export Agenda PDF')
                     ->icon('heroicon-o-document-text')
-                    ->action(function ($livewire) use ($activeTahunAjaran) {
-                        if (!$activeTahunAjaran) {
+                    ->action(function ($livewire) use ($activeTahunAjaran, $activeSmester) {
+                        // Validasi tahun ajaran dan semester aktif
+                        if (!$activeTahunAjaran || !$activeSmester) {
                             Notification::make()
                                 ->title('Error')
-                                ->body('Tidak ada tahun ajaran aktif untuk diekspor.')
+                                ->body('Tidak ada tahun ajaran atau semester aktif.')
                                 ->danger()
                                 ->send();
                             return;
                         }
-
-                        // Ambil th_ajaran_id dari filter tabel
-                        $tahunAjaranId = isset($livewire->tableFilters['th_ajaran_id']['value'])
-                            ? $livewire->tableFilters['th_ajaran_id']['value']
-                            : $activeTahunAjaran->id;
-
+            
+                        // Ambil filter atau gunakan default
+                        $tahunAjaranId = $livewire->tableFilters['th_ajaran_id']['value'] ?? $activeTahunAjaran->id;
+                        $smesterId = $livewire->tableFilters['smester_id']['value'] ?? $activeSmester->id;
+            
+                        // Validasi tahun ajaran
                         $tahunAjaran = \App\Models\TahunAjaran::find($tahunAjaranId);
-
                         if (!$tahunAjaran) {
                             Notification::make()
                                 ->title('Error')
@@ -377,23 +393,46 @@ class SuratKeluarResource extends Resource
                                 ->send();
                             return;
                         }
-
-                        // Ambil data surat keluar berdasarkan tahun ajaran
+            
+                        // Validasi semester
+                        $semester = \App\Models\Smester::find($smesterId);
+                        if (!$semester) {
+                            Notification::make()
+                                ->title('Error')
+                                ->body('Semester tidak ditemukan.')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+            
+                        // Ambil data surat keluar
                         $suratKeluars = SuratKeluar::where('th_ajaran_id', $tahunAjaranId)
-                            ->with(['kategoriSurat'])
-                            ->orderBy('nomor_urut', 'asc')
+                            ->where('smester_id', $smesterId)
+                            ->with('kategoriSurat')
+                            ->orderBy('nomor_urut')
                             ->get();
-
+            
+                        // Cek jika data kosong
+                        if ($suratKeluars->isEmpty()) {
+                            Notification::make()
+                                ->title('Peringatan')
+                                ->body('Tidak ada surat keluar untuk periode ini.')
+                                ->warning()
+                                ->send();
+                            return;
+                        }
+            
                         // Generate PDF
                         $pdf = Pdf::loadView('pdf.agenda-surat-keluar', [
                             'suratKeluars' => $suratKeluars,
+                            'smester' => $semester, // Kirim objek semester
                             'tahunAjaran' => $tahunAjaran,
-                        ])->setPaper('A4', 'landscape');
-
+                        ])->setPaper('a4', 'landscape');
+            
                         // Unduh PDF
                         return response()->streamDownload(
                             fn () => print($pdf->output()),
-                            'agenda-surat-keluar-' . str_replace('/', '-', $tahunAjaran->th_ajaran) . '.pdf' // Ubah th_ajaran menjadi th_ajaran
+                            'agenda-surat-keluar-' . str_replace('/', '-', $tahunAjaran->th_ajaran) . '.pdf'
                         );
                     }),
             ])

@@ -84,7 +84,7 @@
         <div class="header-text">
             <h1>AGENDA SURAT KELUAR</h1>
             <h1>UNIT SMPIT AL-FITYAN CABANG KUBU RAYA</h1>
-            <h2>Tahun Ajaran: {{ $tahunAjaran->th_ajaran ?? 'Tidak Diketahui' }}</h2>
+            <h2>Tahun Ajaran: {{ $tahunAjaran->th_ajaran ?? 'Tidak Diketahui' }} Semester: {{ $smester->nm_smester ?? 'Tidak Diketahui' }}</h2>
         </div>
     </div>
     <hr style="border: 0; border-top: 4px solid #2c3e50; margin-top: 3px;">

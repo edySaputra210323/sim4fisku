@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Models\User;
+use App\Models\Smester;
+use App\Models\TahunAjaran;
+use App\Models\KategoriSurat;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -42,6 +45,7 @@ class SuratKeluar extends Model
 
     public function smester()
     {
-        return $this->belongsTo(Semester::class, 'smester_id');
+        return $this->belongsTo(Smester::class, 'smester_id');
     }
 }
+

@@ -2,11 +2,12 @@
 
 namespace App\Filament\Admin\Resources\SuratKeluarResource\Pages;
 
-use App\Filament\Admin\Resources\SuratKeluarResource;
+use App\Models\Smester;
 use App\Models\SuratKeluar;
 use App\Models\KategoriSurat;
-use Filament\Resources\Pages\CreateRecord;
 use Filament\Notifications\Notification;
+use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Admin\Resources\SuratKeluarResource;
 
 class CreateSuratKeluar extends CreateRecord
 {
@@ -22,13 +23,23 @@ class CreateSuratKeluar extends CreateRecord
                 ->body('Tidak ada tahun ajaran yang aktif. Silakan aktifkan tahun ajaran terlebih dahulu.')
                 ->danger()
                 ->send();
-
-            throw new \Exception('Tidak ada tahun ajaran yang aktif. Silakan aktifkan tahun ajaran terlebih dahulu.');
+            return $data;
         }
+       // Mengambil semester yang aktif
+       $activeSmester = cache()->remember('active_smester', now()->addMinutes(1), fn () => \App\Models\Smester::where('status', true)->first());
+       if (!$activeSmester) {
+           Notification::make()
+               ->title('Error')
+               ->body('Tidak ada semester yang aktif. Silakan aktifkan semester terlebih dahulu.')
+               ->danger()
+               ->send();
+           return $data;
+       }
 
         // Menambahkan ID user yang sedang login ke field 'dibuat_oleh'
         $data['dibuat_oleh'] = auth()->id();
         $data['th_ajaran_id'] = $activeTahunAjaran->id;
+        $data['smester_id'] = $activeSmester->id;
 
         // Generate nomor_urut dan no_surat
         if ($data['tgl_surat_keluar'] && $data['kategori_surat_id']) {
